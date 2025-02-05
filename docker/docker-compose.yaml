@@ -8,7 +8,7 @@ services:
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
-  kafka:
+  kafka1:
     image: confluentinc/cp-kafka:7.8.0
     depends_on:
       - zookeeper
@@ -17,12 +17,81 @@ services:
       - "9094:9094"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      #transaction.state.log.replication.factor: 3 e transaction.state.log.min.isr: 2: - Padrão na criação
+      #Essas configurações indicam que o Kafka espera que o log de estado de transação seja replicado em três
+      #brokers, com pelo menos dois deles em sincronia. Isso requer um cluster com pelo menos três brokers para
+      #funcionar corretamente.
+      #Timeout expired while initializing transactional state in 60000ms.
+      #This means your cluster doesn’t have enough brokers to support transactions.
+      #You probably just have one broker because you’re developing locally.
+      #You have to update the broker configuration parameters:
+      #Resumindo, se tiver apenas um broker, configurar as variaveis abaixo com 1
+      # KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+  kafka2:
+    image: confluentinc/cp-kafka:7.8.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9093"
+      - "9095:9095"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9093,OUTSIDE://:9095
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka2:9093,OUTSIDE://host.docker.internal:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      #transaction.state.log.replication.factor: 3 e transaction.state.log.min.isr: 2: - Padrão na criação
+      #Essas configurações indicam que o Kafka espera que o log de estado de transação seja replicado em três
+      #brokers, com pelo menos dois deles em sincronia. Isso requer um cluster com pelo menos três brokers para
+      #funcionar corretamente.
+      #Timeout expired while initializing transactional state in 60000ms.
+      #This means your cluster doesn’t have enough brokers to support transactions.
+      #You probably just have one broker because you’re developing locally.
+      #You have to update the broker configuration parameters:
+      #Resumindo, se tiver apenas um broker, configurar as variaveis abaixo com 1
+      # KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+  kafka3:
+    image: confluentinc/cp-kafka:7.8.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9096:9096"
+      - "9097:9097"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9096,OUTSIDE://:9097
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:9096,OUTSIDE://host.docker.internal:9097
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      #transaction.state.log.replication.factor: 3 e transaction.state.log.min.isr: 2: - Padrão na criação
+      #Essas configurações indicam que o Kafka espera que o log de estado de transação seja replicado em três
+      #brokers, com pelo menos dois deles em sincronia. Isso requer um cluster com pelo menos três brokers para
+      #funcionar corretamente.
+      #Timeout expired while initializing transactional state in 60000ms.
+      #This means your cluster doesn’t have enough brokers to support transactions.
+      #You probably just have one broker because you’re developing locally.
+      #You have to update the broker configuration parameters:
+      #Resumindo, se tiver apenas um broker, configurar as variaveis abaixo com 1
+      # KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
@@ -30,12 +99,14 @@ services:
     image: confluentinc/cp-enterprise-control-center:7.8.0
     hostname: control-center
     depends_on:
-      - kafka
+      - kafka1
+      - kafka2
+      - kafka3
     ports:
       - "9021:9021"
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
-      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka1:9092,kafka2:9093,kafka3:9096'
+      CONTROL_CENTER_REPLICATION_FACTOR: 3
       CONTROL_CENTER_CONNECT_CLUSTER: http://app-connect:8083
       PORT: 9021
     extra_hosts:
