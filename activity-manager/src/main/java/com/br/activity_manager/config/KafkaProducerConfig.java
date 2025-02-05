@@ -22,12 +22,17 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaAddress;
 
+    @Value("${batch.size}")
+    private int batchSize;
+
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> properties = kafkaProperties.buildProducerProperties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  kafkaAddress);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, batchSize);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10);
         return new DefaultKafkaProducerFactory(properties);
     }
 
