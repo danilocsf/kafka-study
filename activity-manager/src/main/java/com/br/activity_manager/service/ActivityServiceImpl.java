@@ -2,6 +2,7 @@ package com.br.activity_manager.service;
 
 import com.br.activity_manager.dto.ActivityDTO;
 import com.br.activity_manager.enums.ActivityStatus;
+import com.br.activity_manager.producer.ActivityResultProducer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,12 @@ public class ActivityServiceImpl implements ActivityService{
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-   // private ActivityProducer producer;
+   private ActivityResultProducer producer;
 
     @Override
     public void processActivityAndSendResult(final ActivityDTO activity) throws InterruptedException, JsonProcessingException {
         processActvity(activity);
-       // producer.sendActivityResult(result);
+        producer.sendActivityExecutionResult(activity);
     }
 
     private void processActvity(final ActivityDTO activity) throws InterruptedException {
