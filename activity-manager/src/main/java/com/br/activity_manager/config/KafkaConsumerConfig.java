@@ -24,7 +24,7 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaAddress;
 
-    @Value("${topic.activity.group.id.config}")
+    @Value("${topic.activity.group.id}")
     private String activityGroupId;
 
     public ConsumerFactory<String, String> consumerFactory() {
