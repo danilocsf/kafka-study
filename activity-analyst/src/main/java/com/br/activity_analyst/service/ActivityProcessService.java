@@ -1,7 +1,9 @@
 package com.br.activity_analyst.service;
 
-import com.matera.eod.activity_analyst.record.ActivityProcessResult;
+
+import com.br.activity_analyst.record.ActivityRecord;
 
 public interface ActivityProcessService {
-    void insertActivityProcessResultAndSendInformationIfAllActivitiesIsFinihed(ActivityProcessResult activityProcessResult) throws Exception;
+    void insertActivity(ActivityRecord activityExecutingResult);
+    void sendInformationIfAllActivitiesIsFinishedAndCleanData(ActivityRecord activityExecutingResult) throws Exception;
 }

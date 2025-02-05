@@ -23,9 +23,6 @@ public class ActivityResultProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${topic.partition:3}")
-    private int partitions;
-
     @Autowired
     private ObjectMapper objectMapper;
 

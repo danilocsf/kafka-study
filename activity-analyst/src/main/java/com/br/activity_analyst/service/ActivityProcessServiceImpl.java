@@ -1,39 +1,51 @@
 package com.br.activity_analyst.service;
 
+import com.br.activity_analyst.dao.ActivityDAO;
+import com.br.activity_analyst.record.ActivityRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.matera.eod.activity_analyst.dao.ActivityProcessResultDAO;
-import com.matera.eod.activity_analyst.producer.ProcessingResultProducer;
-import com.matera.eod.activity_analyst.record.ActivityProcessResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ActivityProcessServiceImpl implements ActivityProcessService {
 
-    private ActivityProcessResultDAO dao;
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    private ActivityDAO dao;
+
+   // @Autowired
+    //private ProcessingResultProducer producer;
 
     @Autowired
-    private ProcessingResultProducer producer;
-
-    @Autowired
-    public void setDao(ActivityProcessResultDAO dao) {
+    public void setDao(ActivityDAO dao) {
         this.dao = dao;
     }
 
     @Override
-    public void insertActivityProcessResultAndSendInformationIfAllActivitiesIsFinihed(ActivityProcessResult activityProcessResult)
-            throws Exception {
-        dao.insert(activityProcessResult);
-        sendInformationIfFinished(activityProcessResult.processingId(), activityProcessResult.processName(),
-                activityProcessResult.numberOfActivities());
+    public void insertActivity(ActivityRecord activity){
+        dao.insert(activity);
     }
 
-    private void sendInformationIfFinished(Long processingId, String processName, int numberOfActivities) throws JsonProcessingException {
+    @Override
+    public void sendInformationIfAllActivitiesIsFinishedAndCleanData(ActivityRecord activityExecutingResult)
+            throws Exception {
+        if(sendInformationIfFinished(activityExecutingResult.processingId(), activityExecutingResult.processName(),
+                activityExecutingResult.numberOfActivities())) {
+            dao.deleteAll(activityExecutingResult.processingId());
+        };
+
+    }
+
+    private boolean sendInformationIfFinished(Long processingId, String processName, int numberOfActivities) throws JsonProcessingException {
+        boolean sent = false;
         int count = dao.countActivitiesByProcessingId(processingId);
-        System.out.println(count + " activities were processed");
+        LOGGER.info(count + " activities were processed");
         if (count == numberOfActivities) {
-            producer.sendProcessingResult(processingId, processName);
-            dao.deleteAll(processingId);
+            //producer.sendProcessingResult(processingId, processName);
+            sent = true;
         }
+        return sent;
     }
 }

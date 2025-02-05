@@ -27,9 +27,6 @@ public class KafkaConsumerConfig {
     @Value("${topic.activity.group.id}")
     private String activityGroupId;
 
-    @Value("${topic.activity.partitions:3}")
-    private int partitions;
-
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> properties = kafkaProperties.buildConsumerProperties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,  kafkaAddress);

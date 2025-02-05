@@ -1,6 +1,7 @@
 package com.br.activity_analyst.consumer;
 
 import com.br.activity_analyst.record.ActivityRecord;
+import com.br.activity_analyst.service.ActivityProcessService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class ActivityExecutingResultConsumer {
     private ObjectMapper objectMapper;
 
     @Autowired
-   // private ActivityProcessService service;
+    private ActivityProcessService service;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -30,6 +31,7 @@ public class ActivityExecutingResultConsumer {
         LOGGER.info(MessageFormat.format("Received Process Activity Result from Activity {0}, processing id: {1},  " +
                 "process name: {2}", result.activityName(), String.valueOf(result.processingId()),
                 result.processName()));
-        //service.insertActivityProcessResultAndSendInformationIfAllActivitiesIsFinihed(result);
+        service.insertActivity(result);
+        service.sendInformationIfAllActivitiesIsFinishedAndCleanData(result);
     }
 }
