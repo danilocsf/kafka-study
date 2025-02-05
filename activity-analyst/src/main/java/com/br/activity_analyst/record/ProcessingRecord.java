@@ -1,7 +1,6 @@
 package com.br.activity_analyst.record;
 
-
-import com.br.processing_manager.enums.ProcessingStatus;
+import com.br.activity_analyst.enums.ProcessingStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
