@@ -25,6 +25,9 @@ public class KafkaProducerConfig {
     @Value("${batch.size}")
     private int batchSize;
 
+    @Value("${linger.ms}")
+    private int lingerMs;
+
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> properties = kafkaProperties.buildProducerProperties();
@@ -32,7 +35,7 @@ public class KafkaProducerConfig {
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, batchSize);
-        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
         return new DefaultKafkaProducerFactory(properties);
     }
 
