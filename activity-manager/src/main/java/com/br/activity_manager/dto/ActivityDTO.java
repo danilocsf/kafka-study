@@ -15,7 +15,7 @@ import java.util.Objects;
     "status":"finished"
 }
  */
-public class ActivityRecordDTO {
+public class ActivityDTO {
     private Long processingId;
     private String processName;
     private String activityName;
@@ -51,7 +51,7 @@ public class ActivityRecordDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ActivityRecordDTO that = (ActivityRecordDTO) o;
+        ActivityDTO that = (ActivityDTO) o;
         return numberOfActivities == that.numberOfActivities && Objects.equals(processingId, that.processingId) && Objects.equals(processName, that.processName) && Objects.equals(activityName, that.activityName) && status == that.status;
     }
 

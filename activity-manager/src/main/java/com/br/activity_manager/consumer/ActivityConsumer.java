@@ -1,6 +1,6 @@
 package com.br.activity_manager.consumer;
 
-import com.br.activity_manager.dto.ActivityRecordDTO;
+import com.br.activity_manager.dto.ActivityDTO;
 import com.br.activity_manager.service.ActivityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +23,13 @@ public class ActivityConsumer {
     @Autowired
     private ActivityService service;
 
-    @KafkaListener(topics = "${topic.activity}", groupId = "${topic.activity.group.id.config}",
+    @KafkaListener(topics = "${topic.activity}",
+            groupId = "${topic.activity.group.id}",
+            filter="awaitingActivityFilter",
             containerFactory = "kafkaListenerContainerFactory")
     public void activityListener(final String  activityContent) throws JsonProcessingException, InterruptedException {
-        ActivityRecordDTO activity;
-        activity = objectMapper.readValue(activityContent, ActivityRecordDTO.class);
+        ActivityDTO activity;
+        activity = objectMapper.readValue(activityContent, ActivityDTO.class);
         LOGGER.info(MessageFormat.format("Received activity: process name: {0}, activity name {1}",
                 activity.getProcessName(), activity.getActivityName()));
         service.processActivityAndSendResult(activity);

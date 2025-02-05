@@ -1,9 +1,9 @@
 package com.br.activity_manager.service;
 
-import com.br.activity_manager.dto.ActivityRecordDTO;
+import com.br.activity_manager.dto.ActivityDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface ActivityService {
 
-    void processActivityAndSendResult(final ActivityRecordDTO activity) throws InterruptedException, JsonProcessingException;
+    void processActivityAndSendResult(final ActivityDTO activity) throws InterruptedException, JsonProcessingException;
 }

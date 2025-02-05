@@ -1,6 +1,6 @@
 package com.br.activity_manager.service;
 
-import com.br.activity_manager.dto.ActivityRecordDTO;
+import com.br.activity_manager.dto.ActivityDTO;
 import com.br.activity_manager.enums.ActivityStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
@@ -24,12 +24,12 @@ public class ActivityServiceImpl implements ActivityService{
    // private ActivityProducer producer;
 
     @Override
-    public void processActivityAndSendResult(final ActivityRecordDTO activity) throws InterruptedException, JsonProcessingException {
+    public void processActivityAndSendResult(final ActivityDTO activity) throws InterruptedException, JsonProcessingException {
         processActvity(activity);
        // producer.sendActivityResult(result);
     }
 
-    private void processActvity(final ActivityRecordDTO activity) throws InterruptedException {
+    private void processActvity(final ActivityDTO activity) throws InterruptedException {
         LOGGER.info("Processing activity: "+activity.getActivityName());
         updateStatus(activity, ActivityStatus.PROCESSING);
         long processingTime = random.nextLong(MIN_SLEEP, MAX_SLEEP+1);
@@ -40,7 +40,7 @@ public class ActivityServiceImpl implements ActivityService{
         updateStatus(activity, ActivityStatus.FINISHED);
     }
 
-    private void updateStatus(final ActivityRecordDTO activity, final ActivityStatus status) {
+    private void updateStatus(final ActivityDTO activity, final ActivityStatus status) {
         activity.setStatus(status);
     }
 }
