@@ -1,7 +1,10 @@
 package com.br.activity_analyst.service;
 
 import com.br.activity_analyst.dao.ActivityDAO;
+import com.br.activity_analyst.enums.ProcessingStatus;
+import com.br.activity_analyst.producer.ProcessingResultProducer;
 import com.br.activity_analyst.record.ActivityRecord;
+import com.br.activity_analyst.record.ProcessingRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +18,8 @@ public class ActivityProcessServiceImpl implements ActivityProcessService {
 
     private ActivityDAO dao;
 
-   // @Autowired
-    //private ProcessingResultProducer producer;
+    @Autowired
+    private ProcessingResultProducer producer;
 
     @Autowired
     public void setDao(ActivityDAO dao) {
@@ -43,7 +46,9 @@ public class ActivityProcessServiceImpl implements ActivityProcessService {
         int count = dao.countActivitiesByProcessingId(processingId);
         LOGGER.info(count + " activities were processed");
         if (count == numberOfActivities) {
-            //producer.sendProcessingResult(processingId, processName);
+            ProcessingRecord processing = new ProcessingRecord(processingId, processName, numberOfActivities,
+                    ProcessingStatus.FINISHED, false);
+            producer.sendProcessingResult(processing);
             sent = true;
         }
         return sent;
