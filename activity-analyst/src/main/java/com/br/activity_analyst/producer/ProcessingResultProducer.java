@@ -45,8 +45,6 @@ public class ProcessingResultProducer {
         LOGGER.info("Informação antes de finalizar");
         /*Bloqueia a thread atual e espera pelo fim do processamento*/
         future.join();
-        LOGGER.info("Informação depois que o processamento finalizou");
-
     }
 
 }

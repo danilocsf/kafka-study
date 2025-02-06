@@ -49,6 +49,7 @@ public class ActivityProcessServiceImpl implements ActivityProcessService {
             ProcessingRecord processing = new ProcessingRecord(processingId, processName, numberOfActivities,
                     ProcessingStatus.FINISHED, false);
             producer.sendProcessingResult(processing);
+            LOGGER.info("Informação enviada com sucesso");
             sent = true;
         }
         return sent;
