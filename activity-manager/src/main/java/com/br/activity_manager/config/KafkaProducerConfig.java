@@ -28,6 +28,12 @@ public class KafkaProducerConfig {
     @Value("${linger.ms}")
     private int lingerMs;
 
+    @Value("${producer.retries}")
+    private int retry;
+
+    @Value("${producer.retry.backoff.ms}")
+    private int retryBackoffMs;
+
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> properties = kafkaProperties.buildProducerProperties();
@@ -36,6 +42,9 @@ public class KafkaProducerConfig {
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, batchSize);
         properties.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
+        /*Pelo que entendi, esses retries são para casos em que o ACK não foi correspondido*/
+        properties.put(ProducerConfig.RETRIES_CONFIG, retry);
+        properties.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, retryBackoffMs);
         return new DefaultKafkaProducerFactory(properties);
     }
 
